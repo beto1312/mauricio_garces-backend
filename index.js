@@ -9,6 +9,11 @@ const app = express();
 // use es un middleware de express
 app.use( express.static('public') )
 
+// lectura y paseo del body de la request
+// use es un middleware, indicamos que todo lo que recibamos
+// debe pasar por el parseo de json
+app.use( express.json() ) 
+
 // rutas
 // todo lo que tenga /api/auth irá a las rutas de auth.js, como un fgrupo derutas
 app.use( '/api/auth', require('./routes/auth') )
