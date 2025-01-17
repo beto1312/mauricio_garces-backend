@@ -9,12 +9,13 @@ const validarJWT = (req, resp = response, next) => {
   if (!token) {
     return resp.status(400).json({
       ok: false,
-      msg: "No hay token en la peticion",
+      msg: "No hay token en la peticion, por lo tanto no esta autorizado",
     });
   }
 
   try {
-    // obteniendo las propiedades del payload de jwt.
+    // obteniendo las propiedades del payload de jwt. primero verifica que sea un token valido
+    // si es asi obtiene el payload desestructuramos el uid y name
     const { uid, name } = jwt.verify(token, process.env.SECRENT_JWT_SEED);
 
     // modificando la request para andjuntarle el id y el name del usuario que hizo la request
@@ -26,8 +27,6 @@ const validarJWT = (req, resp = response, next) => {
       mdg: "token no válido",
     });
   }
-
-  console.log(token);
 
   next();
 };
