@@ -93,11 +93,26 @@ const login = async (req, res = response) => {
   }
 };
 
-const renew = (req, res = response) => {
-  return res.json({
-    ok: true,
-    msg: "renew",
-  });
+const renew = async (req, res = response) => {
+  // obteniendo el id y name de la request odificada por e middleware
+  const { uid, name } = req;
+
+  try {
+    // generando un nuevo token
+    const token = await generateJWT(uid, name);
+
+    return res.json({
+      ok: true,
+      msg: "renew token",
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "comuniquese con su administrador",
+    });
+  }
 };
 
 module.exports = {
