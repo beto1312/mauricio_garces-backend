@@ -7,11 +7,12 @@ const { Router } = require("express");
 const { check } = require("express-validator");
 
 const { registerUser, login, renew } = require("../controllers/auth");
+const { validarCampos } = require("../middlewares/validar-campos");
 
 // ejecutamos la funcion Router
 const router = Router();
 
-// registro
+// registro de usuario
 router.post(
   "/new",
   [
@@ -19,19 +20,23 @@ router.post(
     check("name", "El nombre es obligatorio").not().isEmpty(),
     check("email", "El correo es olbigatorio").isEmail(),
     check("password", "La contrasena es obligatoria").isLength({ min: 5 }),
+    validarCampos,
   ],
   registerUser
 );
 
+// login
 router.post(
   "/",
   [
     check("email", "El correo es olbigatorio").isEmail(),
     check("password", "La contrasena es obligatoria").isLength({ min: 5 }),
+    validarCampos,
   ],
   login
 );
 
+// renovar token
 router.get("/renew", renew);
 
 module.exports = router;
