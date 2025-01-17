@@ -1,4 +1,5 @@
 const { response } = require("express");
+const Event = require("../models/event");
 
 // obtener los eventos
 const getEvents = (req, res = response) => {
@@ -9,13 +10,28 @@ const getEvents = (req, res = response) => {
 };
 
 // registrar un evento
-const createEvent = (req, res = response) => {
-  
+const createEvent = async (req, res = response) => {
+  // creando un nuevo objeto modelo
+  const event = new Event(req.body);
 
-  return res.json({
-    ok: true,
-    msg: "crear evento",
-  });
+  try {
+    // seteando la informacion del user (en el middleware de valicacion de JWT se le adjunta el id)
+    event.user = req.uid;
+
+    const savedEvent = await event.save();
+
+    return res.json({
+      ok: true,
+      msg: "evento creado",
+      event: savedEvent,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "comuniquese con su administrador",
+    });
+  }
 };
 
 //actualizr evento
