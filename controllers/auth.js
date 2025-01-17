@@ -1,12 +1,13 @@
 // ayuda para obtener el intellipsens
 const { response } = require("express");
 const Usuario = require("../models/usuario");
+const bcrypt = require("bcryptjs");
 
 // los controllers son basicamente las definiciones de
 // los callbacks de los endpoints
 const registerUser = async (req, res = response) => {
   // desestructurando el body de request
-  const { email } = req.body;
+  const { email, password } = req.body;
 
   try {
     // buscamos un usuario con el mismo correo
@@ -22,6 +23,10 @@ const registerUser = async (req, res = response) => {
     // creando nuevo usuario
     usuario = new Usuario(req.body);
 
+    // encriptar password
+    const salt = bcrypt.genSaltSync();
+    usuario.password = bcrypt.hashSync(password, salt);
+
     // grabando en base de datos
     await usuario.save();
 
@@ -32,6 +37,7 @@ const registerUser = async (req, res = response) => {
       name: usuario.name,
     });
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       ok: false,
       msg: "comuniquese con su administrador",
