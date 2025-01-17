@@ -2,10 +2,15 @@ const { response } = require("express");
 const Event = require("../models/event");
 
 // obtener los eventos
-const getEvents = (req, res = response) => {
+const getEvents = async (req, res = response) => {
+  // obtiene todos los eventos
+  // hace una especie de join en el campo user, indicamos que aparte del id (que siempre viene)
+  // solo queremos el nombre
+  const eventos = await Event.find().populate("user", "name");
+
   return res.json({
     ok: true,
-    msg: "Obtener eventos",
+    eventos,
   });
 };
 
