@@ -7,7 +7,7 @@ const validarJWT = (req, resp = response, next) => {
 
   // si el token no exite (no fue enviado)
   if (!token) {
-    return resp.status(400).json({
+    return resp.status(401).json({
       ok: false,
       msg: "No hay token en la peticion, por lo tanto no esta autorizado",
     });
