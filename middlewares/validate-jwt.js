@@ -1,7 +1,7 @@
 const { response } = require("express");
 const jwt = require("jsonwebtoken");
 
-const validarJWT = (req, resp = response, next) => {
+const validateJWT = (req, resp = response, next) => {
   //leyendo x-token en lo headers (x- sirve para crear un header personalizado)
   const token = req.header("x-token");
 
@@ -9,7 +9,7 @@ const validarJWT = (req, resp = response, next) => {
   if (!token) {
     return resp.status(401).json({
       ok: false,
-      msg: "No hay token en la peticion, por lo tanto no esta autorizado",
+      msg: "No JWT in the http request",
     });
   }
 
@@ -24,7 +24,7 @@ const validarJWT = (req, resp = response, next) => {
   } catch (error) {
     return resp.status(401).json({
       ok: false,
-      mdg: "token no válido",
+      mdg: "Invalid token",
     });
   }
 
@@ -32,5 +32,5 @@ const validarJWT = (req, resp = response, next) => {
 };
 
 module.exports = {
-  validarJWT,
+  validateJWT,
 };

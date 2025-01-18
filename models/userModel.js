@@ -1,7 +1,7 @@
-const { Schema, Model, model } = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 // definicion del esquema de la coleccion usuario
-const usuarioSchema = Schema({
+const userSchema = Schema({
   name: {
     type: String,
     required: true,
@@ -15,6 +15,14 @@ const usuarioSchema = Schema({
     type: String,
     required: true,
   },
+  phone: {
+    type: String,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
 });
 
-module.exports = model("Usuario", usuarioSchema);
+module.exports = model("User", userSchema);

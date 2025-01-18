@@ -1,6 +1,6 @@
 // ayuda para obtener el intellipsens
 const { response } = require("express");
-const Usuario = require("../models/usuario");
+const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const { generateJWT } = require("../helpers/jwt");
 
@@ -8,44 +8,44 @@ const { generateJWT } = require("../helpers/jwt");
 // los callbacks de los endpoints
 const registerUser = async (req, res = response) => {
   // desestructurando el body de request
-  const { email, password } = req.body;
+  const { name, email, password, phone, address } = req.body;
 
   try {
-    // buscamos un usuario con el mismo correo
-    let usuario = await Usuario.findOne({ email });
+    // buscamos un user con el mismo correo
+    let user = await User.findOne({ email });
 
-    if (usuario) {
+    if (user) {
       return res.status(400).json({
         ok: false,
-        msg: "Ya existe un usuario con ese correo electronico",
+        msg: "There is already a user with this email address",
       });
     }
 
-    // creando nuevo usuario
-    usuario = new Usuario(req.body);
+    // creando nuevo user
+    user = new User(req.body);
 
     // encriptar password
     const salt = bcrypt.genSaltSync();
-    usuario.password = bcrypt.hashSync(password, salt);
+    user.password = bcrypt.hashSync(password, salt);
 
     // grabando en base de datos
-    await usuario.save();
+    await user.save();
 
     // generar JWT
-    const token = await generateJWT(usuario.id, usuario.name);
+    const token = await generateJWT(user.id, user.name);
 
     return res.status(201).json({
       ok: true,
       msg: "register",
-      uuid: usuario.id,
-      name: usuario.name,
+      uuid: user.id,
+      name: user.name,
       token,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       ok: false,
-      msg: "comuniquese con su administrador",
+      msg: "contact your administrator",
     });
   }
 };
@@ -55,40 +55,40 @@ const login = async (req, res = response) => {
   const { email, password } = req.body;
 
   try {
-    const usuario = await Usuario.findOne({ email });
+    const user = await User.findOne({ email });
 
-    if (!usuario) {
+    if (!user) {
       return res.status(400).json({
         ok: false,
-        msg: "Email no registrado",
+        msg: "Email not registered",
       });
     }
 
     // booleano  si la password es la que esta almacenada
-    const validPassword = bcrypt.compareSync(password, usuario.password);
+    const validPassword = bcrypt.compareSync(password, user.password);
 
     if (!validPassword) {
       return res.status(500).json({
         ok: false,
-        msg: "contraseña incorrecta",
+        msg: "Incorrect password",
       });
     }
 
     // generar JWT
-    const token = await generateJWT(usuario.id, usuario.name);
+    const token = await generateJWT(user.id, user.name);
 
     return res.json({
       ok: true,
       msg: "login",
-      uuid: usuario.id,
-      name: usuario.name,
+      uuid: user.id,
+      name: user.name,
       token,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       ok: false,
-      msg: "comuniquese con su administrador",
+      msg: "contact your administrator",
     });
   }
 };
@@ -110,7 +110,7 @@ const renew = async (req, res = response) => {
     console.log(error);
     return res.status(500).json({
       ok: false,
-      msg: "comuniquese con su administrador",
+      msg: "contact your administrator",
     });
   }
 };

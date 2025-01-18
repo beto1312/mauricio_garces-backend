@@ -6,11 +6,11 @@ const getEvents = async (req, res = response) => {
   // obtiene todos los eventos
   // hace una especie de join en el campo user, indicamos que aparte del id (que siempre viene)
   // solo queremos el nombre
-  const eventos = await Event.find().populate("user", "name");
+  const events = await Event.find().populate("user", "name");
 
   return res.json({
     ok: true,
-    eventos,
+    eventos: events,
   });
 };
 
@@ -27,14 +27,14 @@ const createEvent = async (req, res = response) => {
 
     return res.json({
       ok: true,
-      msg: "evento creado",
+      msg: "created event",
       event: savedEvent,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       ok: false,
-      msg: "comuniquese con su administrador",
+      msg: "Contact your administrator",
     });
   }
 };
@@ -54,7 +54,7 @@ const updateEvent = async (req, res = response) => {
     if (!event) {
       return res.status(404).json({
         ok: false,
-        msg: "evento con ese id no existe",
+        msg: "There is no event with the provided id",
       });
     }
 
@@ -62,7 +62,7 @@ const updateEvent = async (req, res = response) => {
     if (event.user.toString() !== uidUserRequest) {
       return res.status(401).json({
         ok: false,
-        msg: "No estas autorizado para actualizar el evento",
+        msg: "You are not authorized to update the event",
       });
     }
 
@@ -82,14 +82,14 @@ const updateEvent = async (req, res = response) => {
 
     return res.json({
       ok: true,
-      msg: "evento actualizado",
+      msg: "Event updated",
       eventpActualizado,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       ok: false,
-      msg: "comuniquese con su administrador",
+      msg: "Contact your administrator",
     });
   }
 };
@@ -109,7 +109,7 @@ const deleteEvent = async (req, res = response) => {
     if (!event) {
       return res.status(404).json({
         ok: false,
-        msg: "evento con ese id no existe",
+        msg: "There is no event with the provided id",
       });
     }
 
@@ -117,7 +117,7 @@ const deleteEvent = async (req, res = response) => {
     if (event.user.toString() !== uidUserRequest) {
       return res.status(401).json({
         ok: false,
-        msg: "No estas autorizado para eliminar el evento",
+        msg: "You are not authorized to delete the event",
       });
     }
 
@@ -126,14 +126,14 @@ const deleteEvent = async (req, res = response) => {
 
     return res.json({
       ok: true,
-      msg: "eliminar evento",
+      msg: "Deleted event",
       eventDeleted,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
       ok: false,
-      msg: "comuniquese con su administrador",
+      msg: "Contact your administrator",
     });
   }
 };

@@ -2,7 +2,7 @@ const { response } = require("express");
 // obteniendo la funcion que checkea el resultado de la validaciones
 const { validationResult } = require("express-validator");
 
-const validarCampos = (req, res = response, next) => {
+const validateFields = (req, res = response, next) => {
   // enviando la request a las reglas de validacion
   const errors = validationResult(req);
 
@@ -20,5 +20,5 @@ const validarCampos = (req, res = response, next) => {
 
 
 module.exports = {
-    validarCampos
+    validateFields
 }

@@ -2,13 +2,10 @@
 const { Router } = require("express");
 
 // importacion de check de express validator
-// check, checkea que ciertos campos se encuentren en el body de la request
-// con ciertas reglas de validacion
 const { check } = require("express-validator");
-
-const { registerUser, login, renew } = require("../controllers/auth");
-const { validarCampos } = require("../middlewares/validar-campos");
-const { validarJWT } = require("../middlewares/validar-jwt");
+const { registerUser, login, renew } = require("../controllers/authController");
+const { validateFields } = require("../middlewares/validate-fields");
+const { validateJWT } = require("../middlewares/validate-jwt");
 
 // ejecutamos la funcion Router
 const router = Router();
@@ -18,10 +15,10 @@ router.post(
   "/new",
   [
     // que el name sea obligatorio y no este vacio
-    check("name", "El nombre es obligatorio").not().isEmpty(),
-    check("email", "El correo es olbigatorio").isEmail(),
-    check("password", "La contrasena es obligatoria").isLength({ min: 5 }),
-    validarCampos,
+    check("name", "name is required").not().isEmpty(),
+    check("email", "email is required").isEmail(),
+    check("password", "password is required").isLength({ min: 5 }),
+    validateFields,
   ],
   registerUser
 );
@@ -30,14 +27,14 @@ router.post(
 router.post(
   "/",
   [
-    check("email", "El correo es olbigatorio").isEmail(),
-    check("password", "La contrasena es obligatoria").isLength({ min: 5 }),
-    validarCampos,
+    check("email", "email is required").isEmail(),
+    check("password", "password is required").isLength({ min: 5 }),
+    validateFields,
   ],
   login
 );
 
 // renovar token
-router.get("/renew", validarJWT, renew);
+router.get("/renew", validateJWT, renew);
 
 module.exports = router;
