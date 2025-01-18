@@ -18,6 +18,7 @@ router.post(
     check("name", "name is required").not().isEmpty(),
     check("email", "email is required").isEmail(),
     check("password", "password is required").isLength({ min: 5 }),
+    check("address", "address is required").isLength({ min: 10 }),
     validateFields,
   ],
   registerUser

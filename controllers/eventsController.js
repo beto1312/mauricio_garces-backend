@@ -3,10 +3,18 @@ const Event = require("../models/eventModel");
 
 // obtener los eventos
 const getEvents = async (req, res = response) => {
-  // obtiene todos los eventos
-  // hace una especie de join en el campo user, indicamos que aparte del id (que siempre viene)
-  // solo queremos el nombre
-  const events = await Event.find().populate("user", "name");
+  // Obtenemos el uid y el rol del usuario de la solicitud
+  const { uid, rol } = req;
+
+  let events;
+
+  if (rol === "admin") {
+    // Si el usuario es administrador, obtiene todos los eventos
+    events = await Event.find().populate("user", "name");
+  } else {
+    // Si no es administrador, obtiene solo los eventos creados por el usuario
+    events = await Event.find({ user: uid }).populate("user", "name");
+  }
 
   return res.json({
     ok: true,
@@ -17,12 +25,13 @@ const getEvents = async (req, res = response) => {
 // registrar un evento
 const createEvent = async (req, res = response) => {
   // creando un nuevo objeto modelo
-  const event = new Event(req.body);
+  const event = new Event({
+    ...req.body,
+    user: req.uid,
+    comments: req?.comments || "",
+  });
 
   try {
-    // seteando la informacion del user (en el middleware de valicacion de JWT se le adjunta el id)
-    event.user = req.uid;
-
     const savedEvent = await event.save();
 
     return res.json({
@@ -74,11 +83,9 @@ const updateEvent = async (req, res = response) => {
 
     // {new: true} indica que queremos obtener el documento nuevo (actualizado)
     // si no tuviera eso, devolveria el viejito
-    const eventUpdated = await Event.findByIdAndUpdate(
-      eventoId,
-      newEvent,
-      { new: true }
-    );
+    const eventUpdated = await Event.findByIdAndUpdate(eventoId, newEvent, {
+      new: true,
+    });
 
     return res.json({
       ok: true,
@@ -101,6 +108,8 @@ const deleteEvent = async (req, res = response) => {
 
   const uidUserRequest = req.uid;
 
+  const rol = req.rol;
+
   try {
     // verificar que el id recibido existe en la base de datos
     const event = await Event.findById(eventoId);
@@ -114,7 +123,7 @@ const deleteEvent = async (req, res = response) => {
     }
 
     // si la persona que creo el evento no es la misma que lo quiere eliminar
-    if (event.user.toString() !== uidUserRequest) {
+    if (event.user.toString() !== uidUserRequest && rol !== "admin") {
       return res.status(401).json({
         ok: false,
         msg: "You are not authorized to delete the event",
@@ -137,6 +146,8 @@ const deleteEvent = async (req, res = response) => {
     });
   }
 };
+
+// 
 
 module.exports = {
   getEvents,

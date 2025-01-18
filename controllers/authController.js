@@ -8,7 +8,7 @@ const { generateJWT } = require("../helpers/jwt");
 // los callbacks de los endpoints
 const registerUser = async (req, res = response) => {
   // desestructurando el body de request
-  const { name, email, password, phone, address } = req.body;
+  const { email, password } = req.body;
 
   try {
     // buscamos un user con el mismo correo
@@ -22,7 +22,7 @@ const registerUser = async (req, res = response) => {
     }
 
     // creando nuevo user
-    user = new User(req.body);
+    user = new User({ ...req.body, rol: "user" });
 
     // encriptar password
     const salt = bcrypt.genSaltSync();
@@ -39,6 +39,7 @@ const registerUser = async (req, res = response) => {
       msg: "register",
       uuid: user.id,
       name: user.name,
+      address: user.address,
       token,
     });
   } catch (error) {
@@ -82,6 +83,7 @@ const login = async (req, res = response) => {
       msg: "login",
       uuid: user.id,
       name: user.name,
+      address: user.address,
       token,
     });
   } catch (error) {
