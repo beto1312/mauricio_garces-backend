@@ -1,5 +1,5 @@
 const { response } = require("express");
-const Event = require("../models/event");
+const Event = require("../models/eventModel");
 
 // obtener los eventos
 const getEvents = async (req, res = response) => {
@@ -74,7 +74,7 @@ const updateEvent = async (req, res = response) => {
 
     // {new: true} indica que queremos obtener el documento nuevo (actualizado)
     // si no tuviera eso, devolveria el viejito
-    const eventpActualizado = await Event.findByIdAndUpdate(
+    const eventUpdated = await Event.findByIdAndUpdate(
       eventoId,
       newEvent,
       { new: true }
@@ -83,7 +83,7 @@ const updateEvent = async (req, res = response) => {
     return res.json({
       ok: true,
       msg: "Event updated",
-      eventpActualizado,
+      eventUpdated,
     });
   } catch (error) {
     console.log(error);
