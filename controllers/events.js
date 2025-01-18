@@ -40,11 +40,58 @@ const createEvent = async (req, res = response) => {
 };
 
 //actualizr evento
-const updateEvent = (req, res = response) => {
-  return res.json({
-    ok: true,
-    msg: "actualizar evento",
-  });
+const updateEvent = async (req, res = response) => {
+  // obteniendo el parametro de ruta
+  const eventoId = req.params.id;
+
+  const uidUserRequest = req.uid;
+
+  try {
+    // verificar que el id recibido existe en la base de datos
+    const event = await Event.findById(eventoId);
+
+    // si no existe
+    if (!event) {
+      return res.status(404).json({
+        ok: false,
+        msg: "evento con ese id no existe",
+      });
+    }
+
+    // si la persona que creo el evento no es la misma que lo quiere actualizar
+    if (event.user.toString() !== uidUserRequest) {
+      return res.status(401).json({
+        ok: false,
+        msg: "No estas autorizado para actualizar el evento",
+      });
+    }
+
+    // creando el nuevo evento
+    const newEvent = {
+      ...req.body,
+      user: uidUserRequest,
+    };
+
+    // {new: true} indica que queremos obtener el documento nuevo (actualizado)
+    // si no tuviera eso, devolveria el viejito
+    const eventpActualizado = await Event.findByIdAndUpdate(
+      eventoId,
+      newEvent,
+      { new: true }
+    );
+
+    return res.json({
+      ok: true,
+      msg: "evento actualizado",
+      eventpActualizado,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "comuniquese con su administrador",
+    });
+  }
 };
 
 // eliminar evento
