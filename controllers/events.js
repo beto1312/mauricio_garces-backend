@@ -95,11 +95,47 @@ const updateEvent = async (req, res = response) => {
 };
 
 // eliminar evento
-const deleteEvent = (req, res = response) => {
-  return res.json({
-    ok: true,
-    msg: "eliminar evento",
-  });
+const deleteEvent = async (req, res = response) => {
+  // obteniendo el parametro de ruta
+  const eventoId = req.params.id;
+
+  const uidUserRequest = req.uid;
+
+  try {
+    // verificar que el id recibido existe en la base de datos
+    const event = await Event.findById(eventoId);
+
+    // si no existe
+    if (!event) {
+      return res.status(404).json({
+        ok: false,
+        msg: "evento con ese id no existe",
+      });
+    }
+
+    // si la persona que creo el evento no es la misma que lo quiere eliminar
+    if (event.user.toString() !== uidUserRequest) {
+      return res.status(401).json({
+        ok: false,
+        msg: "No estas autorizado para eliminar el evento",
+      });
+    }
+
+    // obtiene el documento eliminado
+    const eventDeleted = await Event.findByIdAndDelete(eventoId);
+
+    return res.json({
+      ok: true,
+      msg: "eliminar evento",
+      eventDeleted,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "comuniquese con su administrador",
+    });
+  }
 };
 
 module.exports = {
