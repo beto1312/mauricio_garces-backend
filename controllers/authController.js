@@ -97,15 +97,17 @@ const login = async (req, res = response) => {
 
 const renew = async (req, res = response) => {
   // obteniendo el id y name de la request odificada por e middleware
-  const { uid, name } = req;
+  const { uid, name, rol } = req;
 
   try {
     // generando un nuevo token
-    const token = await generateJWT(uid, name);
+    const token = await generateJWT(uid, name, rol);
 
     return res.json({
       ok: true,
       msg: "renew token",
+      uuid: uid,
+      name,
       token,
     });
   } catch (error) {
