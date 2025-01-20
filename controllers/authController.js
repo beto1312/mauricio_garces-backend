@@ -40,6 +40,8 @@ const registerUser = async (req, res = response) => {
       uuid: user.id,
       name: user.name,
       address: user.address,
+      phone: user.phone,
+      email: user.email,
       token,
     });
   } catch (error) {
@@ -84,6 +86,8 @@ const login = async (req, res = response) => {
       uuid: user.id,
       name: user.name,
       address: user.address,
+      phone: user.phone,
+      email: user.email,
       token,
     });
   } catch (error) {
@@ -100,6 +104,9 @@ const renew = async (req, res = response) => {
   const { uid, name, rol } = req;
 
   try {
+
+    const user = await User.findById(uid)
+
     // generando un nuevo token
     const token = await generateJWT(uid, name, rol);
 
@@ -108,6 +115,9 @@ const renew = async (req, res = response) => {
       msg: "renew token",
       uuid: uid,
       name,
+      address: user.address,
+      phone: user.phone,
+      email: user.email,
       token,
     });
   } catch (error) {

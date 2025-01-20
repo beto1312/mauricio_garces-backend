@@ -22,6 +22,14 @@ const eventSchema = Schema({
     type: String,
     required: true,
   },
+  startHour: {
+    type: Number,
+    required: true,
+  },
+  endHour: {
+    type: Number,
+    required: true,
+  },
   comments: {
     type: String,
     required: false,
