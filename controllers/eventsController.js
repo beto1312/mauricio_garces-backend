@@ -91,7 +91,6 @@ const createEvent = async (req, res = response) => {
   const event = new Event({
     ...req.body,
     user: req.uid,
-    comments: req?.comments || "",
   });
 
   try {
