@@ -29,4 +29,4 @@ const userSchema = Schema({
   }
 });
 
-module.exports = model("User", userSchema);
+module.exports = model("User", userSchema, "users"); // Aquí forzamos el nombre "users"
